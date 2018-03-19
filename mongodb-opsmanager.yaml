@@ -26,7 +26,7 @@
         image: centos 
         env:
           - name: MONGODB_K8S_OPSMGR_REPO
-            value: "https://github.com/jasonmimick/..."
+            value: "https://github.com/jasonmimick/mongodb-k8s-opsmanager"
         command: [ '/bin/sh', '-c' ]
         args: [ "curl -OL $(MONGODB_K8S_OPSMGR_REPO) && chmod +x ./scripts/install-mongodb-opsmanager.sh && ./scripts/install-mongodb-opsmanager.sh" ]
         ports:
