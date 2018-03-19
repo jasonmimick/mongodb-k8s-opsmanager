@@ -1,0 +1,45 @@
+##############################################################################
+## Provision mongodb-opsmanger
+##############################################################################
+- name: Create Service
+  k8s_v1_service:
+    name: "MongoDB-OpsManager"
+    labels:
+      name: "MongoDB-OpsManager"
+    spec_selector:
+      app: "MongoDB-OpsManager"
+    spec_ports:
+      - port: 8080
+        name: "MongoDB-OpsManager"
+    spec_cluster_ip: None
+
+- name: Create StatefulSet
+  k8s_v1beta1_stateful_set:
+    name: "MongoDB-OpsManager"
+    replicas: 1
+    spec_template_metadata_labels:
+      app: "MongoDB-OpsManager"
+    spec_service_name: "MongoDB-OpsManager"
+    spec_template_spec_termination_grace_period_seconds: 10
+    containers:
+      - name: "MongoDB-OpsManager"
+        image: centos 
+        env:
+          - name: MONGODB_K8S_OPSMGR_REPO
+            value: "https://github.com/jasonmimick/..."
+        command: [ '/bin/sh', '-c' ]
+        args: [ "curl -OL $(MONGODB_K8S_OPSMGR_REPO) && chmod +x ./scripts/install-mongodb-opsmanager.sh && ./scripts/install-mongodb-opsmanager.sh" ]
+        ports:
+        volumeMounts:
+          - name: "pvc"
+            mountPath: /data
+    spec_volume_claim_templates:
+      - name: "pvc"
+        metadata:
+          name: "pvc"
+        spec:
+          accessModes: [ "ReadWriteOnce" ]
+          resources:
+            requests:
+              storage: "10Gi"
+
